@@ -24,8 +24,8 @@ public class Operando extends Practica6{
     
     
     
-    String[] Direccion(String Operando,String dir, int lin,String moddir,String codop,int BanOrg,String ContLoc,String FCC){
-        String[] Resultado = new String[] {"null","null","null","0000","0000"};
+    String[] Direccion(String Operando,String dir, int lin,String moddir,String codop,int BanOrg,String ContLoc,String FCC, String moddir2,String FCC3, String ContLoc2){
+        String[] Resultado = new String[] {"null","null","null","0000","0000","null","0000"};
         String[] Busqueda = new String[] {"null","null"};
         String  b=".err",Mdir="null", Res="null";
         String Byte="null";
@@ -38,16 +38,16 @@ public class Operando extends Practica6{
         BufferedWriter error=new BufferedWriter(fw);
         
            // System.out.println("Codop antes: "+codop);
-         //  System.out.println("Operando mod antes: "+Operando);
+         // System.out.println("Operando mod antes: "+Operando+" moddir: "+moddir);
          
-      if(Operando.matches("^\\$[0-9A-Fa-f]*")||Operando.matches("^\\@[0-7].*")||Operando.matches("^\\%.*")||Operando.matches("^\\#.*")||Operando.matches("^[0-9].*")||Operando.matches("^[a-zA-Z].*")||Operando.matches("^\\[.*\\]$")||Operando.matches("^\\-.*")||Operando.matches("^\\,.*")||codop.equals("FCC")){
+      if(Operando.matches("^[a-zA-Z]{0,8}[^;]{0,1}[\\w]$")||Operando.matches("^\\$[0-9A-Fa-f]*")||Operando.matches("^\\@[0-7].*")||Operando.matches("^\\%.*")||Operando.matches("^\\#.*")||Operando.matches("^[0-9].*")||Operando.matches("^[a-zA-Z].*")||Operando.matches("^\\[.*\\]$")||Operando.matches("^\\-.*")||Operando.matches("^\\,.*")||codop.equals("FCC")){
           /*   
           
         */  
          codop=codop.toUpperCase();
           //System.out.println("Codop mod: "+codop);
          // System.out.println("A2: "+z);
-        // System.out.println("Operando mod Despues: "+Operando);
+        // System.out.println("Operando mod Despues: "+Operando+" moddir: "+moddir);
          
          ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                /////////////////////////////////////////////////////ContLoc
@@ -65,7 +65,8 @@ public class Operando extends Practica6{
                            ORG=Integer.parseInt(Hexa,16);
                           if(ORG<=65535){
                                //inserta el valor en Hexadecimal al Contador Logico
-                              ContLoc=Integer.toHexString(ORG).toUpperCase(); 
+                              ContLoc=Integer.toHexString(ORG).toUpperCase();
+                              ContLoc2=ContLoc;
                               BanOrg=1;
                               Mdir="DTV";
                               }
@@ -78,6 +79,7 @@ public class Operando extends Practica6{
                           if(ORG<=65535){
                                //inserta el valor en Hexadecimal al Contador Logico
                               ContLoc=Integer.toHexString(ORG).toUpperCase(); 
+                              ContLoc2=ContLoc;
                               BanOrg=1;
                               Mdir="DTV";
                               }
@@ -98,6 +100,7 @@ public class Operando extends Practica6{
                                    ORG=Integer.parseInt(Operando);
                                    if(ORG<=65535){
                                    ContLoc=Integer.toHexString(ORG).toUpperCase();
+                                   ContLoc2=ContLoc;
                                   Mdir="DTV";
                                      BanOrg=1; 
                                    }
@@ -125,6 +128,7 @@ public class Operando extends Practica6{
                           if(EQU<=65535){
                                //inserta el valor en Hexadecimal al Contador Logico
                               ContLoc=Integer.toHexString(EQU).toUpperCase(); 
+                              ContLoc2=ContLoc;
                               Mdir="DTV";
                               }
                              }//termina hexadecimal
@@ -138,6 +142,7 @@ public class Operando extends Practica6{
                           if(EQU<=65535){
                                //inserta el valor en Hexadecimal al Contador Logico
                               ContLoc=Integer.toHexString(EQU).toUpperCase(); 
+                              ContLoc2=ContLoc;
                               Mdir="DTV";
                               }
                              }//Termina Octal
@@ -149,7 +154,8 @@ public class Operando extends Practica6{
                            EQU=Integer.parseInt(Hexa,2);
                           if(EQU<=65535){
                                //inserta el valor en Hexadecimal al Contador Logico
-                              ContLoc=Integer.toHexString(EQU).toUpperCase(); 
+                              ContLoc=Integer.toHexString(EQU).toUpperCase();
+                              ContLoc2=ContLoc;
                               Mdir="DTV";
                               }
                              }//Termina Binario
@@ -158,6 +164,7 @@ public class Operando extends Practica6{
                                    EQU=Integer.parseInt(Operando);
                                    if(EQU<=65535){
                                    ContLoc=Integer.toHexString(EQU).toUpperCase();
+                                   ContLoc2=ContLoc;
                                     Mdir="DTV"; 
                                    }
                                   }
@@ -330,17 +337,21 @@ public class Operando extends Practica6{
                       }
                   }//termina de dos bytes
                   //Entra FCC
+                  
                   if(codop.equals("FCC")){
+                      if(!FCC.equals(FCC3)){
                       int siz=FCC.length();
                       if(siz>0){
                           
                          //int siz=Operando.length();
                         String FCC2=FCC.substring(0,siz-1);
-                        //System.out.println("FCC2"+FCC2);
+                        
                        // StringTokenizer FCCx = new StringTokenizer(FCC2,"\\\"");
                            //  String FCC3=FCCx.nextToken();
                              Res=FCC2;
+                                 FCC3=FCC;
                             DiCons =FCC2.length();
+                          //  System.out.println("FCC: "+FCC+" FCC2: "+FCC2+" TamFCC2: "+DiCons);
                          //   System.out.println("FCC2"+FCC2+"Tam "+DiCons);
                             int cont=Integer.parseInt(ContLoc,16);
                             cont=cont+DiCons;//suma la longitud del operando
@@ -350,7 +361,11 @@ public class Operando extends Practica6{
                       error.write("Linea: "+lin+" Error:"+codop+" no cumple con el las especificaciones: "+DiCons);
                       error.newLine();
                       }
-  
+                  }else{
+                          Res="\""+FCC3;
+                          Mdir="DTV";
+                      }
+                   
                   }//Termina FCC
                   
                   BanContLoc=1;
@@ -465,11 +480,15 @@ public class Operando extends Practica6{
                         String Oct=Operando.substring(1,siz);
                            DiMem=Integer.parseInt(Oct,8);
                            if(DiMem<=65535&&DiMem>=0){
+                               
+                               
                                //suma resultado de operando*2 con ContLoc
                                int cont=Integer.parseInt(ContLoc,16);
+                               System.out.println("Octal: "+DiMem+" ContLoc: "+cont);
                                DiMem=DiMem*2;
                                cont=cont+DiMem;
                                ContLoc=Integer.toHexString(cont).toUpperCase(); 
+                               
                                Mdir="DTV";
                            }else{
                                error.write("Linea: "+lin+" Error:"+codop+" no cumple con el valor requerido (valor actual:"+DiMem+")");
@@ -498,9 +517,12 @@ public class Operando extends Practica6{
                           DiMem=Integer.parseInt(Operando,10);
                            if(DiMem<=65535&&DiMem>=0){
                                //suma resultado de operando con ContLoc
+                               
                                int cont=Integer.parseInt(ContLoc,16);
                                DiMem=DiMem*2;
+                               System.out.println("DiMem: "+DiMem+" cont: "+cont);
                                cont=cont+DiMem;
+                               System.out.println("DiMem: "+DiMem+" cont: "+cont);
                                ContLoc=Integer.toHexString(cont).toUpperCase();
                                Mdir="DTV";
                            }else{
@@ -527,7 +549,7 @@ public class Operando extends Practica6{
          
          
           //Directo y Extendido
-          if(Operando.matches("^\\%[10]*$")&&BanContLoc!=1&&!codop.equals("ORG")||Operando.matches("^\\@[0-7]+")&&BanContLoc!=1&&!codop.equals("ORG")||Operando.matches("^\\$[0-9A-Fa-f]*")&&BanContLoc!=1&&!codop.equals("ORG")||Operando.matches("^[0-9]+")&&BanContLoc!=1&&!codop.equals("ORG"))
+          if(Operando.matches("^[a-zA-Z]{0,8}[^;]{0,1}[\\w]$")||Operando.matches("^\\%[10]*$")&&BanContLoc!=1&&!codop.equals("ORG")||Operando.matches("^\\@[0-7]+")&&BanContLoc!=1&&!codop.equals("ORG")||Operando.matches("^\\$[0-9A-Fa-f]*")&&BanContLoc!=1&&!codop.equals("ORG")||Operando.matches("^[0-9]+")&&BanContLoc!=1&&!codop.equals("ORG"))
           {
           //DIR
               boolean banDir=false;
@@ -535,7 +557,7 @@ public class Operando extends Practica6{
               if(!moddir.equals("REL")){
              int DIR=0;
            //  System.out.println("Rel?: "+codop);
-             if(!moddir.equals("EXT")){
+             
               ///////////////////////////////////////////////Directo
               if(Operando.matches("^\\$[0-9A-Fa-f]*")||Operando.matches("^\\@[-]*[0-7]*")||Operando.matches("^\\%[10]*")){
                   
@@ -631,11 +653,11 @@ public class Operando extends Practica6{
                   }
                   
               }//Termina Directo
-             }
+             
               ///////////////////////////////////////////Extendido
-              if(!moddir.equals("DIR")){
+              if(!moddir2.equals("DIR")){
               int EXT=0;
-              if(Operando.matches("^\\$[0-9A-Fa-f]*")||Operando.matches("^\\@[-]*[0-7]*")||Operando.matches("^\\%[10]*")){
+              if(Operando.matches("^[a-zA-Z]{0,8}[^;]{0,1}[\\w]$")||Operando.matches("^\\$[0-9A-Fa-f]*")||Operando.matches("^\\@[-]*[0-7]*")||Operando.matches("^\\%[10]*")){
                   
                   //Hexadecimal
                   if(Operando.matches("^\\$[0-9A-Fa-f]*")){
@@ -703,6 +725,14 @@ public class Operando extends Practica6{
                   ///////////////////////////////////////////////  
                   }
                   }//termina binario
+                  //Entra Etiqueta
+                  if(Operando.matches("^[a-zA-Z]{0,8}[^;]{0,1}[\\w]$")){
+                      
+                      //System.out.println("Entro Operando EXT: "+Operando);
+                      Mdir="EXT";
+                      
+                      
+                  }//termina Etiqueta
               }else{
               
                   if(Operando.matches("^[0-9]*$")){
@@ -1127,7 +1157,7 @@ public class Operando extends Practica6{
                   //////////////////// Busqueda de Bytes y CodMaq
                   String et="null";
                   String MaqDir= Integer.toHexString(IMM);
-                  MaqDir=fillContLoc(MaqDir);//rellena los
+                  MaqDir=fillContLoc(MaqDir);
                   Busqueda =Bytes(codop,Mdir,MaqDir,et);
                   String cadby=Busqueda[0];
                   int byt=Integer.parseInt(cadby);
@@ -1182,7 +1212,7 @@ public class Operando extends Practica6{
                   //////////////////// Busqueda de Bytes y CodMaq
                   String et="null";
                   String MaqDir= Integer.toHexString(IMM);
-                  MaqDir=fillContLoc(MaqDir);//rellena los
+                  MaqDir=fillContLoc(MaqDir);
                   Busqueda =Bytes(codop,Mdir,MaqDir,et);
                   String cadby=Busqueda[0];
                   int byt=Integer.parseInt(cadby);
@@ -1236,7 +1266,7 @@ public class Operando extends Practica6{
                   //////////////////// Busqueda de Bytes y CodMaq
                   String et="null";
                   String MaqDir= Integer.toHexString(IMM);
-                  MaqDir=fillContLoc(MaqDir);//rellena los
+                  MaqDir=fillContLoc(MaqDir);
                   Busqueda =Bytes(codop,Mdir,MaqDir,et);
                   String cadby=Busqueda[0];
                   int byt=Integer.parseInt(cadby);
@@ -1291,7 +1321,7 @@ public class Operando extends Practica6{
                   //////////////////// Busqueda de Bytes y CodMaq
                   String et="null";
                   String MaqDir= Integer.toHexString(IMM);
-                  MaqDir=fillContLoc(MaqDir);//rellena los
+                  MaqDir=fillContLoc(MaqDir);
                   Busqueda =Bytes(codop,Mdir,MaqDir,et);
                   String cadby=Busqueda[0];
                   int byt=Integer.parseInt(cadby);
@@ -1530,16 +1560,18 @@ public class Operando extends Practica6{
             
         }
         ContLoc=fillContLoc(ContLoc);
+        ContLoc2=fillContLoc(ContLoc2);
         //System.out.println("Mdir: "+Mdir+"Res op: "+Res);
         Resultado[0]=Mdir;
         Resultado[1]=Res;
         Resultado[2]=Integer.toString(BanOrg);
         Resultado[3]=ContLoc;
-        Resultado[4]=Busqueda[1];//Codigo maquina
-       
+        Resultado[4]=Busqueda[1].toUpperCase();//Codigo maquina
+        Resultado[5]=FCC3;
+        Resultado[6]=ContLoc2;
        System.out.println(" Mdir: "+Resultado[0]+" Res op: "+Resultado[1]+" Ban ORG: "+Resultado[2]+" ContLoc: "+Resultado[3]);
       return Resultado;
-    }
+    }///////////////////////////////////Termina Direccion
     
     public static int hextodec(String hexdecnum)
     {
@@ -1568,7 +1600,7 @@ public class Operando extends Practica6{
                    String[] Bytes=new String[]{"null","null"};
         
                        String TABOP="TABOP";
-                         String mayus,exCod,IDX5="null",Operando="null";
+                         String mayus,exCod,IDX5="null",Operando="null",IMM="null";
                           dir.toUpperCase();
                           if(dir.equals("IMM8")||dir.equals("IMM16")){
                               dir="INM";
@@ -1607,7 +1639,12 @@ public class Operando extends Practica6{
                                        
                                        
                                      //  System.out.println("Auxiliar "+linaux);
-                                       
+                                     /*String moddir=aucod.nextToken("|");   //Modo de direccionamiento  
+                                      String codcal=aucod.nextToken("|");  //Codigo maquina calculado
+                                     String totbytes=aucod.nextToken("|"); //Total de bytes
+                                     String  bytescal=aucod.nextToken("|"); //Bytes calculados
+                                     String  bytesxcal=aucod.nextToken("|");  //Bytes por calcular  
+                                     */
                                       String   sioperS=aucod.nextToken("|");    //Vrifica si lleva operando
                                       int  sioperI=Integer.parseInt(sioperS); //convierte de String a Cadena
                                      String  moddir=aucod.nextToken("|");   //Modo de direccionamiento  
@@ -1631,6 +1668,11 @@ public class Operando extends Practica6{
                                           // System.out.println("Bytesxcal: "+Bytes[0]+" CodMaq: "+Bytes[1]);
                                        }
                                        if(dir.equals(moddir)&&dir.equals("EXT")&&EtOp=="null"){
+                                           Bytes[0]=bytesxcal;
+                                           Bytes[1]=codcal+CodMaq;
+                                           //System.out.println("Bytesxcal: "+Bytes[0]+" CodMaq: "+Bytes[1]);
+                                       }
+                                       if(dir.equals(moddir)&&dir.equals("EXT")&&EtOp!="null"){
                                            Bytes[0]=bytesxcal;
                                            Bytes[1]=codcal+CodMaq;
                                            //System.out.println("Bytesxcal: "+Bytes[0]+" CodMaq: "+Bytes[1]);
@@ -1659,7 +1701,7 @@ public class Operando extends Practica6{
                                                System.out.println("Binario2: "+CodMaq);
                                            }else{
                                                if(siz==1){
-                                                  CodMaq="0000"+CodMaq;
+                                                  CodMaq="00000"+CodMaq;
                                                }else{
                                                CodMaq="00"+CodMaq;
                                                }
@@ -1681,12 +1723,15 @@ public class Operando extends Practica6{
                                              System.out.println("Binario2: "+CodMaq+" Operando "+rr);
                                             String rr0nnnnn=rr+CodMaq;
                                              String rr0n=rr0nnnnn.substring(0,7-4);
-                                             int a=Integer.parseInt(rr0n);
+                                            // fillContLoc(rr0n);
+                                             int a=Integer.parseInt(rr0n, 2);
                                              String nnnn=rr0nnnnn.substring(3,7);
-                                             int b=Integer.parseInt(nnnn);
+                                             int b=Integer.parseInt(nnnn, 2);
+                                             //int c=Integer.parseInt(rr0nnnnn, 2);
                                              String hex=Integer.toHexString(a);
                                              String hex2=Integer.toHexString(b);
-                                            System.out.println("Binario2: "+hex+" Binario3: "+hex2);
+                                             //String hex3=Integer.toHexString(c);
+                                            //System.out.println("rr0n: "+rr0n+"nnnn: "+nnnn+"Int1: "+a+" Int2: "+b+" rr: "+rr+" CodMaq: "+CodMaq+" Binario2: "+hex+" Binario3: "+hex2+" Binario3: "+hex3);
                                              Bytes[0]=bytesxcal;
                                              Bytes[1]=codcal+hex.toUpperCase()+hex2.toUpperCase();
                                             }
@@ -1765,6 +1810,7 @@ public class Operando extends Practica6{
                                    if(exEtq.toUpperCase().compareTo(mayus.toUpperCase())==0&&mayus!="null"&&mayus!=null&&mayus!=" "){
                                      ContLoc =aucod.nextToken("|");
                                        System.out.println("ContLoc ins: "+ContLoc);
+                                       
                                    }
                                    
                                    }
@@ -1817,7 +1863,21 @@ public class Operando extends Practica6{
             case 4:
                 break;
         }
-        Linea[1]=ContLoc;
+         switch(size2){
+            
+            case 1: 
+                Linea[1]="000"+ContLoc;
+                break;
+            case 2:
+                Linea[1]="00"+ContLoc;
+                break;
+            case 3:
+                Linea[1]="0"+ContLoc;
+            case 4:
+                Linea[1]=ContLoc;
+                break;
+        }
+        
         switch(size3){
             
             case 1: 
