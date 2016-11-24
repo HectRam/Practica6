@@ -26,17 +26,19 @@ public class Practica6 {
         
         Scanner s = new Scanner(System.in);
         String thisLine,dir,a=".asm",b=".err",i=".inst",ax=null,l=".tds";
-        String[] Resultado = new String[] {"null", "null","null","0000"};
+        String[] Resultado = new String[] {"null","null","null","0000","0000","null","0000"};
         String[] Busqueda  = new String[] {"null","null"};
         String[] Linea = new String[]{" "," "," "," "," "," "};
         thisLine = null;
-        String ContLoc="0000";
+        String ContLoc="0000", ContLoc2="0000",FCC3="null";
         int poslin=0,c=0,pos=0,banbuffer=0,banCod=0,sioperI=2,operval=0,BanOrg=0,compara=0,tam2=0;
+                
         espacio es;
         Operando op;
         String CodMaq="null";
         String etiqueta = null, codop = null, operando = null, comentario=null,linToken=null,codoplin=null,sioperS=null,codopprue=null,Mdir=null,FCC="";
         String exEt=null,exCod=null,moddir=null,codcal=null,bytescal=null,bytesxcal=null,totbytes=null,samecod=null,dircod=null,samecod2=null,Res="null";
+        String moddir2="null",bits="null";
         Vector<String> cadena;
         cadena = new Vector<>();
         System.out.print("Ruta del archivo? ");
@@ -99,7 +101,8 @@ public class Practica6 {
                    if(thisLine.matches(".*\\\"$")){
                        
                        int line=thisLine.indexOf('"');
-                       FCC=thisLine.substring(line+1);                      
+                       FCC=thisLine.substring(line+1);
+                       FCC=thisLine.substring(line+1);
                      //  System.out.println("FCC "+FCC);
                         tam2=FCC.length();
                        //System.out.println("Tam2: "+tam2);
@@ -166,7 +169,7 @@ public class Practica6 {
                          
                          
                          String TABOP="TABOP";
-                         String mayus,maux="null";
+                         String mayus,maux="null",maux2="null",maux3="null";
                          
                          try{
                              FileInputStream fsaux = new FileInputStream(TABOP+a);
@@ -181,10 +184,11 @@ public class Practica6 {
                                  StringTokenizer aucod = new StringTokenizer(linaux,"|");
                                         mayus=linToken;
                                    exCod=aucod.nextToken();
+                                   
                                  //  System.out.println("Tabop: "+exCod);
                                    errtab=true;
                                   // System.out.println("excod "+exCod+" mayus"+mayus);
-                                   if(exCod.compareTo(linToken.toUpperCase())==0/*&&mayus!="null"&&mayus!=null&&mayus!=" "*/){
+                                   if(exCod.trim().equals(mayus.trim().toUpperCase())/*&&mayus!="null"&&mayus!=null&&mayus!=" "*/){
                                        errtab=false;
                                        codop=linToken.toUpperCase();
                                        
@@ -195,14 +199,20 @@ public class Practica6 {
                                        banCod=1;
                                        
                                      //  System.out.println("Auxiliar "+linaux);
-                                       
-                                         sioperS=aucod.nextToken("|");    //Vrifica si lleva operando
+                                           sioperS=aucod.nextToken("|");    //Vrifica si lleva operando
                                         sioperI=Integer.parseInt(sioperS); //convierte de String a Cadena
                                        moddir=aucod.nextToken("|");   //Modo de direccionamiento  
-                                       codcal=aucod.nextToken("|");  //Codigo maquina calculado
+                                       codcal=aucod.nextToken("|");  //Codigo Maquina calculado
                                        bytescal=aucod.nextToken("|"); //Bytes calculados
                                        bytesxcal=aucod.nextToken("|");  //Bytes por calcular
                                        totbytes=aucod.nextToken("|");  //Total de bytes
+                                     /*/// Tabop2
+                                       moddir=aucod.nextToken("|");   //Modo de direccionamiento  
+                                       codcal=aucod.nextToken("|");  //Codigo maquina calculado
+                                      totbytes=aucod.nextToken("|"); //Total de bytes
+                                       bytescal=aucod.nextToken("|"); //Bytes calculados
+                                       bytesxcal=aucod.nextToken("|");  //Bytes por calcular 
+                                     */
                             /*           System.out.print("Codop: "+codop);
                                        System.out.print(" Modo de direccionamiento: "+moddir);
                                        System.out.print(" Codigo calculado: "+codcal);
@@ -220,6 +230,7 @@ public class Practica6 {
                                            if(moddir.equals("INH")){
                                                modosdir.write(moddir+" ");
                                                operval=1;
+                                               maux3=bytesxcal;
                                                CodMaq=codcal;//codigo maquina
                                               // System.out.println("Codop "+codop+" Operando"+moddir);
                                            }
@@ -227,11 +238,15 @@ public class Practica6 {
                                                modosdir.write(moddir+" ");
                                                operval=1;
                                                moddir="INM";
+                                               maux3=bytesxcal;
                                                CodMaq=codcal;//codigo maquina
                                            }
-                                           if(moddir.equals("INM")||moddir.equals("REL")||moddir.equals("EXT")||moddir.equals("DIR")){
+                                           if(moddir.equals("INM")||moddir.equals("REL")){
                                               
                                                maux=moddir;
+                                           }
+                                           if(moddir.equals("EXT")||moddir.equals("DIR")){
+                                              maux2=moddir; 
                                            }
                                            
                                                //System.out.println("Codop "+codop+" moddir ");
@@ -268,6 +283,14 @@ public class Practica6 {
                              moddir=maux;
                          //System.out.println("moddir: "+moddir+" "+maux);
                          }
+                         if(maux2!="null"){
+                             moddir2=maux2;
+                         //System.out.println("moddir: "+moddir+" "+maux);
+                         }
+                         if(maux3!="null"){
+                             bits=maux3;
+                         //System.out.println("moddir: "+moddir+" "+maux);
+                         }
                          }//termina practica 2
                                 
                                 /**
@@ -292,12 +315,14 @@ public class Practica6 {
                                      operando=linToken;
                                  //    System.out.println("Operando  "+operando);
                                     
-                                    Resultado = op.Direccion(operando,dir,c,moddir,codop,BanOrg, ContLoc,FCC);
+                                    Resultado = op.Direccion(operando,dir,c,moddir,codop,BanOrg, ContLoc,FCC,moddir2,FCC3,ContLoc2);
                                     Mdir=Resultado[0];
                                     Res=Resultado[1];
                                     BanOrg=Integer.parseInt(Resultado[2]);
                                     ContLoc=Resultado[3];
                                     CodMaq=Resultado[4];
+                                    FCC3=Resultado[5];
+                                    ContLoc2=Resultado[6];
                                     // System.out.println("Modo de direccion "+Mdir);
                                      
                                      if(codop.equals(" ")){
@@ -440,7 +465,15 @@ public class Practica6 {
                   if(etiqueta!="null"){
                       
                   }
-                     ///Inserta datos
+                  
+                  if(bits!="null"){
+                      String cadby=bits;
+                  int byt=Integer.parseInt(cadby);
+                  int cont=Integer.parseInt(ContLoc,16);
+                  cont=cont+byt;
+                  ContLoc=Integer.toHexString(cont).toUpperCase();
+                  }
+                     ////////////////Inserta datos
                      if(banCod==1&&errBan==false/*&&compara==0*/){
                       
                      samecod2=codop+a;
@@ -458,35 +491,43 @@ public class Practica6 {
                       }
                       
                       if(codoplin!="null"){
-                        if(codop!="null"&&etiqueta!="null"&&operando!="null"){
+                          ///Entra Tabsim
+                        if(codop!="null"&&etiqueta!="null"){
                      // System.out.println("Codop Equ: tronador04"+codop);
                       compara= op.TabsimCheck(dir,etiqueta);
                       if(compara==0){
-                      tabsim.write(etiqueta+"|"+ContLoc);
+                      tabsim.write(etiqueta.toUpperCase()+"|"+ContLoc);
                       tabsim.newLine();
                       
                       }
-                      if(codoplin.equals("EXT")&&etiqueta!="null"){
-                          String Con=op.TabsimCheck2(dir,etiqueta);
-                          Busqueda =op.Bytes(codop, codoplin, Con, etiqueta);
+                      //Entra busqueda de codigo maquina Extendido
+                      if(codoplin.equals("EXT")&&operando.matches("^[a-zA-Z]{0,8}[^;]{0,1}[\\w]$")){
                           
-                      }
-                      }
+                          String Con=op.TabsimCheck2(dir,operando);
+                          
+                          Busqueda =op.Bytes(codop, codoplin, Con, operando);
+                          System.out.println("Entro extendido: "+operando+" CodMaq: "+Busqueda[1]);
+                          CodMaq=Busqueda[1];
+                         }///Termina 
+                      }//Termina Tabsim
                         if(compara==0){
                       if(Res!="null"){
                      //inserta resultado de Operando 
                       operando=Res;
                       String nu=Integer.toString(c);
-                      Linea=op.fillline(nu, ContLoc, etiqueta, codop, operando, codoplin);
+                      Linea=op.fillline(nu, ContLoc2, etiqueta, codop, operando, codoplin);
                   System.out.println(Linea[0]+"  co  "+Linea[1]+"  ee  "+Linea[2]+"  cc  "+Linea[3]+"  oo  "+Linea[4]+"  op  "+Linea[5]+"  cm  "+CodMaq);
                   instrucciones.write(Linea[0]+"      "+Linea[1]+"      "+Linea[2]+"      "+Linea[3]+"      "+Linea[4]+"      "+Linea[5]+"      "+CodMaq);
                   instrucciones.newLine();
+                  ContLoc2=ContLoc;
                       }else{
+                          
                           String nu=Integer.toString(c);
-                      Linea=op.fillline(nu, ContLoc, etiqueta, codop, operando, codoplin);
+                      Linea=op.fillline(nu, ContLoc2, etiqueta, codop, operando, codoplin);
                   System.out.println(Linea[0]+"  co  "+Linea[1]+"  ee  "+Linea[2]+"  cc  "+Linea[3]+"  oo  "+Linea[4]+"  op  "+Linea[5]+"  cm  "+CodMaq);
                   instrucciones.write(Linea[0]+"      "+Linea[1]+"      "+Linea[2]+"      "+Linea[3]+"      "+Linea[4]+"      "+Linea[5]+"      "+CodMaq);
-                  instrucciones.newLine();  
+                  instrucciones.newLine();
+                       ContLoc2=ContLoc;
                       }
                        }
                       }
@@ -529,9 +570,14 @@ public class Practica6 {
                      operval=0;
                      compara=0;
                      CodMaq=" ";
+                      bits="null";
                      if(linToken.matches(".*END.*")||linToken.matches(".*End.*")||linToken.matches(".*end.*")){//verifica si tiene End
                            banEnd = true;
                            System.out.println("Entro End");
+                           String nu=Integer.toString(c);
+                           nu=op.fillContLoc(nu);
+                           instrucciones.write(nu+"      "+ContLoc+"      "+"null"+"          "+"END"+"        "+"null"+"                "+"null"+"          "+"null");
+                           instrucciones.newLine();
                        }
                       
                     }
