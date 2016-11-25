@@ -62,10 +62,7 @@ public class Practica6 {
             File f2com =new File(dir+"comentarios"+a);
             FileWriter fwcom=new FileWriter(f2com,true);
             BufferedWriter comentarios=new BufferedWriter(fwcom);
-            //escribe en el archivo tabsim
-            File tab =new File(dir+l);
-            FileWriter fwtab=new FileWriter(tab,true);
-            BufferedWriter tabsim=new BufferedWriter(fwtab);
+            
            // StringTokenizer Token = new StringTokenizer(dir+a);
             boolean banEnd,espacio,banCom,banderalim,errBan,banEt,errtab=false;
             banEnd = false;
@@ -493,23 +490,33 @@ public class Practica6 {
                       if(codoplin!="null"){
                           ///Entra Tabsim
                         if(codop!="null"&&etiqueta!="null"){
+                       //escribe en el archivo tabsim
+                       File tab =new File(dir+l);
+                       FileWriter fwtab=new FileWriter(tab,true);
+                       BufferedWriter tabsim=new BufferedWriter(fwtab);
                      // System.out.println("Codop Equ: tronador04"+codop);
                       compara= op.TabsimCheck(dir,etiqueta);
                       if(compara==0){
                       tabsim.write(etiqueta.toUpperCase()+"|"+ContLoc);
                       tabsim.newLine();
-                      
                       }
+                       tabsim.close();
+                      }//Termina Tabsim
                       //Entra busqueda de codigo maquina Extendido
                       if(codoplin.equals("EXT")&&operando.matches("^[a-zA-Z]{0,8}[^;]{0,1}[\\w]$")){
                           
                           String Con=op.TabsimCheck2(dir,operando);
-                          
+                          System.out.println("ConTab: "+Con);
+                          if(Con!="null"&&Con!=null){
                           Busqueda =op.Bytes(codop, codoplin, Con, operando);
-                          System.out.println("Entro extendido: "+operando+" CodMaq: "+Busqueda[1]);
+                          //System.out.println("Entro extendido: "+operando+" CodMaq: "+Busqueda[1]+" ConTab: "+Con);
                           CodMaq=Busqueda[1];
-                         }///Termina 
-                      }//Termina Tabsim
+                          }else{
+                              error.write("Error Linea: "+c+" No se encontro la etiqueta en Tabsim para: "+operando);
+                              error.newLine();
+                              compara=1;
+                          }
+                         }///Termina
                         if(compara==0){
                       if(Res!="null"){
                      //inserta resultado de Operando 
@@ -589,7 +596,7 @@ public class Practica6 {
                        }
                 //System.out.println("Fin del recorrido");   
              //  fw.close();
-             tabsim.close();
+            
              comentarios.close();
                error.close();
                instrucciones.close();
