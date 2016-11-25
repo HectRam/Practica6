@@ -1275,7 +1275,7 @@ public class Operando extends Practica6{
                   ContLoc=Integer.toHexString(cont).toUpperCase();
                   MaqBan=true;
                   ///////////////////////////////////////////////
-                  if(IMM>=-256&&IMM<=-1||immcad.matches("^0.*")){
+                  if(IMM>=-256&&IMM<=-1&&!immcad.matches("^0.*")){
                        x = IMM;  
                        y = ~x;   
                        z = y + 1;
@@ -1672,11 +1672,6 @@ public class Operando extends Practica6{
                                            Bytes[1]=codcal+CodMaq;
                                            //System.out.println("Bytesxcal: "+Bytes[0]+" CodMaq: "+Bytes[1]);
                                        }
-                                       if(dir.equals(moddir)&&dir.equals("EXT")&&EtOp!="null"){
-                                           Bytes[0]=bytesxcal;
-                                           Bytes[1]=codcal+CodMaq;
-                                           //System.out.println("Bytesxcal: "+Bytes[0]+" CodMaq: "+Bytes[1]);
-                                       }
                                        if(dir.equals(moddir)&&dir.equals("INM")){
                                            Bytes[0]=bytesxcal;
                                            Bytes[1]=codcal+CodMaq;
@@ -1686,8 +1681,7 @@ public class Operando extends Practica6{
                                            Bytes[0]=bytesxcal;
                                        }
                                        if(dir.equals(moddir)&&dir.equals("EXT")&&EtOp!="null"){
-                                          int conv =Integer.parseInt(CodMaq);
-                                            CodMaq=Integer.toHexString(conv);
+                                           
                                            Bytes[1]=codcal+CodMaq; 
                                        }
                                        if(dir.equals(moddir)&&IDX5.equals("IDX5")&&Operando!="null"){
@@ -1786,11 +1780,11 @@ public class Operando extends Practica6{
         
         return compara;
     }
-    public String TabsimCheck2(String dir, String Etq){
+    public String TabsimCheck2(String dir, String Oper){
         
         
                          
-                         String mayus,exEtq,ContLoc=null;
+                         String mayus,exOper,ContLoc=null;
                           
                          try{
                              FileInputStream fsaux = new FileInputStream(dir+".tds");
@@ -1803,11 +1797,11 @@ public class Operando extends Practica6{
                              while((linaux = braux.readLine())!= null){
                                  
                                  StringTokenizer aucod = new StringTokenizer(linaux,"|");
-                                        mayus=Etq;
-                                   exEtq=aucod.nextToken();
+                                        mayus=Oper;
+                                   exOper=aucod.nextToken();
                                  
-                                   
-                                   if(exEtq.toUpperCase().compareTo(mayus.toUpperCase())==0&&mayus!="null"&&mayus!=null&&mayus!=" "){
+                                   System.out.println("Operando: "+Oper+" Opertds: "+exOper);
+                                   if(exOper.toUpperCase().compareTo(mayus.toUpperCase())==0/*&&mayus!="null"&&mayus!=null&&mayus!=" "*/){
                                      ContLoc =aucod.nextToken("|");
                                        System.out.println("ContLoc ins: "+ContLoc);
                                        
