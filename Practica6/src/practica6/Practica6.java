@@ -242,8 +242,8 @@ public class Practica6 {
                                               
                                                maux=moddir;
                                            }
-                                           if(moddir.equals("EXT")||moddir.equals("DIR")){
-                                              maux2=moddir; 
+                                           if(codop.equals("CLR")&&moddir.equals("EXT")||codop.equals("JMP")&&moddir.equals("EXT")){
+                                              maux2=codop; 
                                            }
                                            
                                                //System.out.println("Codop "+codop+" moddir ");
@@ -270,7 +270,7 @@ public class Practica6 {
                         // codopprue=linToken;
                          if(linToken.matches("^[a-z]{0,4}")&&!"equ".equals(linToken)&&espacio==false&&linToken!=codop){
                              
-                            etiqueta=linToken;
+                            //etiqueta=linToken;
                             //System.out.println("Alterna linToken"+linToken);
                            // System.out.println("Eticod: "+codopprue);
                               //codopprue="null";
@@ -499,6 +499,8 @@ public class Practica6 {
                       if(compara==0){
                       tabsim.write(etiqueta.toUpperCase()+"|"+ContLoc);
                       tabsim.newLine();
+                      }else{//Entra a ordenar y borrar etiqueta 
+                          //op.Ordena(dir,etiqueta);
                       }
                        tabsim.close();
                       }//Termina Tabsim
@@ -512,6 +514,8 @@ public class Practica6 {
                           //System.out.println("Entro extendido: "+operando+" CodMaq: "+Busqueda[1]+" ConTab: "+Con);
                           CodMaq=Busqueda[1];
                           }else{
+                              
+                              
                               error.write("Error Linea: "+c+" No se encontro la etiqueta en Tabsim para: "+operando);
                               error.newLine();
                               compara=1;
@@ -524,7 +528,7 @@ public class Practica6 {
                       String nu=Integer.toString(c);
                       Linea=op.fillline(nu, ContLoc2, etiqueta, codop, operando, codoplin);
                   System.out.println(Linea[0]+"  co  "+Linea[1]+"  ee  "+Linea[2]+"  cc  "+Linea[3]+"  oo  "+Linea[4]+"  op  "+Linea[5]+"  cm  "+CodMaq);
-                  instrucciones.write(Linea[0]+"      "+Linea[1]+"      "+Linea[2]+"      "+Linea[3]+"      "+Linea[4]+"      "+Linea[5]+"      "+CodMaq);
+                  instrucciones.write(Linea[0]+"        "+Linea[1]+"        "+Linea[2]+"        "+Linea[3]+"        "+Linea[4]+"        "+Linea[5]+"        "+CodMaq);
                   instrucciones.newLine();
                   ContLoc2=ContLoc;
                       }else{
@@ -532,8 +536,8 @@ public class Practica6 {
                           String nu=Integer.toString(c);
                       Linea=op.fillline(nu, ContLoc2, etiqueta, codop, operando, codoplin);
                   System.out.println(Linea[0]+"  co  "+Linea[1]+"  ee  "+Linea[2]+"  cc  "+Linea[3]+"  oo  "+Linea[4]+"  op  "+Linea[5]+"  cm  "+CodMaq);
-                  instrucciones.write(Linea[0]+"      "+Linea[1]+"      "+Linea[2]+"      "+Linea[3]+"      "+Linea[4]+"      "+Linea[5]+"      "+CodMaq);
-                  instrucciones.newLine();
+                  instrucciones.write(Linea[0]+"        "+Linea[1]+"        "+Linea[2]+"        "+Linea[3]+"        "+Linea[4]+"        "+Linea[5]+"        "+CodMaq);
+                  instrucciones.newLine();      
                        ContLoc2=ContLoc;
                       }
                        }
@@ -583,7 +587,7 @@ public class Practica6 {
                            System.out.println("Entro End");
                            String nu=Integer.toString(c);
                            nu=op.fillContLoc(nu);
-                           instrucciones.write(nu+"      "+ContLoc+"      "+"null"+"          "+"END"+"        "+"null"+"                "+"null"+"          "+"null");
+                           instrucciones.write(nu+"            "+ContLoc+"             "+"null"+"                "+"END"+"               "+"null"+"                      "+"null"+"                 "+"null");
                            instrucciones.newLine();
                        }
                       
