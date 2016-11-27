@@ -557,7 +557,7 @@ public class Operando extends Practica6{
               if(!moddir.equals("REL")){
              int DIR=0;
            //  System.out.println("Rel?: "+codop);
-             
+           if(!moddir2.equals("JMP")&&!moddir2.equals("CLR")){
               ///////////////////////////////////////////////Directo
               if(Operando.matches("^\\$[0-9A-Fa-f]*")||Operando.matches("^\\@[-]*[0-7]*")||Operando.matches("^\\%[10]*")){
                   
@@ -636,7 +636,7 @@ public class Operando extends Practica6{
                   if(DIR>=0&&DIR<=255){
                    banDir=true;   
                   Mdir="DIR";
-                  
+                  System.out.println("Operando Dir: "+Operando);
                   //////////////////// Busqueda de Bytes y CodMaq
                   String et="null";
                   String MaqDir= Integer.toHexString(DIR);
@@ -653,11 +653,11 @@ public class Operando extends Practica6{
                   }
                   
               }//Termina Directo
-             
+              }
               ///////////////////////////////////////////Extendido
-              if(!moddir2.equals("DIR")){
+             // if(!moddir2.equals("DIR")){
               int EXT=0;
-              if(Operando.matches("^[a-zA-Z]{0,8}[^;]{0,1}[\\w]$")||Operando.matches("^\\$[0-9A-Fa-f]*")||Operando.matches("^\\@[-]*[0-7]*")||Operando.matches("^\\%[10]*")){
+              if(Operando.matches("^[a-zA-Z]{0,8}[^;]{0,1}[\\w]$")&&banDir!=true||Operando.matches("^\\$[0-9A-Fa-f]*")&&banDir!=true||Operando.matches("^\\@[-]*[0-7]*")&&banDir!=true||Operando.matches("^\\%[10]*")&&banDir!=true){
                   
                   //Hexadecimal
                   if(Operando.matches("^\\$[0-9A-Fa-f]*")){
@@ -735,7 +735,8 @@ public class Operando extends Practica6{
                   }//termina Etiqueta
               }else{
               
-                  if(Operando.matches("^[0-9]*$")){
+                  if(Operando.matches("^[0-9]*$")&&banDir!=true){
+                      System.out.println("OperandoExt: "+Operando);
                   int tam=Operando.length();
                   String dircad=Operando.substring(0,tam);
                   EXT=Integer.parseInt(dircad,10);  
@@ -757,7 +758,7 @@ public class Operando extends Practica6{
                   }
                   }
               }//Termina Extendido
-             }
+            // }
               
              }
           
@@ -793,13 +794,13 @@ public class Operando extends Practica6{
                   
               }
              
-              if(IDXcade.matches("^[-]?[0-9].*")&&IDXB==false){
+              if(Operando.matches("^$\\.*")&&IDXB==false){
                   
                   int  IDXint=Integer.parseInt(IDXcade,16);
                   //contienen Decimales
                   
                    // IDX 5Bits
-                 if(IDXint>=-16&&IDXint<=15&&IDXB==false&&Operando.matches("^[-]?[0-9]*,([X|x|Y|y|sp|SP|pc|PC])*$")&&IDXB==false){
+                 if(IDXint>=-16&&IDXint<=15&&IDXB==false&&Operando.matches(".*,([X|x|Y|y|sp|SP|pc|PC])*$")&&IDXB==false){
                      IDXB=true;
                      Mdir="IDX";
                      //////////////////// Busqueda de Bytes y CodMaq
@@ -817,19 +818,56 @@ public class Operando extends Practica6{
                   /////////////////////////////////////////////// 
                  }
                  //IDX 9 Bits
-                 if(IDXint>=-256&&IDXint<=-17&&IDXB==false||IDXint>=16&&IDXint<=255&&IDXB==false){
+                 if(IDXint>=-256&&IDXint<=-17&&Operando.matches("^.*,([X|x|Y|y|sp|SP|pc|PC])*$")&&IDXB==false||IDXint>=16&&IDXint<=255&&Operando.matches(".*,([X|x|Y|y|sp|SP|pc|PC])*$")&&IDXB==false){
                      Mdir="IDX1";
                      IDXB=true;
+                     //////////////////// Busqueda de Bytes y CodMaq
+                  String op=IDX.nextToken();
+                  String MaqDir= Integer.toBinaryString(IDXint);
+                  Busqueda =Bytes(codop,Mdir,MaqDir,op);
+                  ////////////////////////Operacion para ContLoc
+                  String cadby=Busqueda[0];
+                  int byt=Integer.parseInt(cadby);
+                  int cont=Integer.parseInt(ContLoc,16);
+                  cont=cont+byt;
+                  ContLoc=Integer.toHexString(cont).toUpperCase();
+                  MaqBan=true;
+                  /////////////////////////////////////////////// 
                  }
                  //IDX 16Bits
-                 if(IDXint<=-257&&IDXint>=-32768&&IDXB==false||IDXint>=256&&IDXint<=65535&&IDXB==false){
+                 if(IDXint<=-257&&IDXint>=-32768&&IDXB==false&&Operando.matches("^.*,([X|x|Y|y|sp|SP|pc|PC])*$")&&IDXB==false||IDXint>=256&&IDXint<=65535&&IDXB==false&&Operando.matches("^.*,([X|x|Y|y|sp|SP|pc|PC])*$")&&IDXB==false){
                      Mdir="IDX2";
                      IDXB=true;
+                     //////////////////// Busqueda de Bytes y CodMaq
+                  String op=IDX.nextToken();
+                  String MaqDir= Integer.toBinaryString(IDXint);
+                  Busqueda =Bytes(codop,Mdir,MaqDir,op);
+                  ////////////////////////Operacion para ContLoc
+                  String cadby=Busqueda[0];
+                  int byt=Integer.parseInt(cadby);
+                  int cont=Integer.parseInt(ContLoc,16);
+                  cont=cont+byt;
+                  ContLoc=Integer.toHexString(cont).toUpperCase();
+                  MaqBan=true;
+                  ///////////////////////////////////////////////
                  }
-                 if(Operando.matches("[0-9]*,([+|-])*([X|x|Y|y|sp|SP])*[+|-]*$")&&IDXB==false){
-                     
-                     Mdir="IDX";
+                 if(IDXint<=-1&&IDXint>=-8&&Operando.matches(".*,([+|-])*([X|x|Y|y|sp|SP])*[+|-]*$")&&IDXB==false||IDXint<=8&&IDXint>=1&&Operando.matches(".*,([+|-])*([X|x|Y|y|sp|SP])*[+|-]*$")&&IDXB==false){
+                     //System.out.println("Operando IDXPPP: "+Operando);
+                     Mdir="IDXPP";
                      //System.out.println("Mdir Pre/Post: "+Mdir);
+                     //////////////////// Busqueda de Bytes y CodMaq
+                  String op=IDX.nextToken();
+                  String MaqDir= Integer.toBinaryString(IDXint);
+                  Busqueda =Bytes(codop,Mdir,MaqDir,op);
+                  ////////////////////////Operacion para ContLoc
+                  String cadby=Busqueda[0];
+                  int byt=Integer.parseInt(cadby);
+                  int cont=Integer.parseInt(ContLoc,16);
+                  cont=cont+byt;
+                  ContLoc=Integer.toHexString(cont).toUpperCase();
+                  MaqBan=true;
+                  Mdir="IDX";
+                  /////////////////////////////////////////////// 
                  }
                  
                 }
@@ -850,13 +888,13 @@ public class Operando extends Practica6{
                   
               }
              
-              if(IDXcade.matches("^[-]?[0-9].*")&&IDXB==false){
+              if(Operando.matches("^\\@.*")&&IDXB==false){
                   banRel=true;
                   int  IDXint=Integer.parseInt(IDXcade,8);
                   //contienen Decimales
                   
                    // IDX 5Bits
-                 if(IDXint>=-16&&IDXint<=15&&IDXB==false&&Operando.matches("^[-]?[0-9]*,([X|x|Y|y|sp|SP|pc|PC])*$")&&IDXB==false){
+                 if(IDXint>=-16&&IDXint<=15&&IDXB==false&&Operando.matches(".*,([X|x|Y|y|sp|SP|pc|PC])*$")&&IDXB==false){
                      IDXB=true;
                      Mdir="IDX";
                      //////////////////// Busqueda de Bytes y CodMaq
@@ -874,19 +912,56 @@ public class Operando extends Practica6{
                   /////////////////////////////////////////////// 
                  }
                  //IDX 9 Bits
-                 if(IDXint>=-256&&IDXint<=-17&&IDXB==false||IDXint>=16&&IDXint<=255&&IDXB==false){
+                 if(IDXint>=-256&&IDXint<=-17&&Operando.matches(".*,([X|x|Y|y|sp|SP|pc|PC])*$")&&IDXB==false||IDXint>=16&&IDXint<=255&&Operando.matches(".*,([X|x|Y|y|sp|SP|pc|PC])*$")&&IDXB==false){
                      Mdir="IDX1";
                      IDXB=true;
+                     //////////////////// Busqueda de Bytes y CodMaq
+                  String op=IDX.nextToken();
+                  String MaqDir= Integer.toBinaryString(IDXint);
+                  Busqueda =Bytes(codop,Mdir,MaqDir,op);
+                  ////////////////////////Operacion para ContLoc
+                  String cadby=Busqueda[0];
+                  int byt=Integer.parseInt(cadby);
+                  int cont=Integer.parseInt(ContLoc,16);
+                  cont=cont+byt;
+                  ContLoc=Integer.toHexString(cont).toUpperCase();
+                  MaqBan=true;
+                  /////////////////////////////////////////////// 
                  }
                  //IDX 16Bits
-                 if(IDXint<=-257&&IDXint>=-32768&&IDXB==false||IDXint>=256&&IDXint<=65535&&IDXB==false){
+                 if(IDXint<=-257&&IDXint>=-32768&&IDXB==false&&Operando.matches("^.*,([X|x|Y|y|sp|SP|pc|PC])*$")&&IDXB==false||IDXint>=256&&IDXint<=65535&&IDXB==false&&Operando.matches("^.*,([X|x|Y|y|sp|SP|pc|PC])*$")&&IDXB==false){
                      Mdir="IDX2";
                      IDXB=true;
+                     //////////////////// Busqueda de Bytes y CodMaq
+                  String op=IDX.nextToken();
+                  String MaqDir= Integer.toBinaryString(IDXint);
+                  Busqueda =Bytes(codop,Mdir,MaqDir,op);
+                  ////////////////////////Operacion para ContLoc
+                  String cadby=Busqueda[0];
+                  int byt=Integer.parseInt(cadby);
+                  int cont=Integer.parseInt(ContLoc,16);
+                  cont=cont+byt;
+                  ContLoc=Integer.toHexString(cont).toUpperCase();
+                  MaqBan=true;
+                  ///////////////////////////////////////////////
                  }
-                 if(Operando.matches("[0-9]*,([+|-])*([X|x|Y|y|sp|SP])*[+|-]*$")&&IDXB==false){
-                     
-                     Mdir="IDX";
+                 if(IDXint<=-1&&IDXint>=-8&&Operando.matches(".*,([+|-])*([X|x|Y|y|sp|SP])*[+|-]*$")&&IDXB==false||IDXint<=8&&IDXint>=1&&Operando.matches(".*,([+|-])*([X|x|Y|y|sp|SP])*[+|-]*$")&&IDXB==false){
+                     //System.out.println("Operando IDXPPP: "+Operando);
+                     Mdir="IDXPP";
                      //System.out.println("Mdir Pre/Post: "+Mdir);
+                     //////////////////// Busqueda de Bytes y CodMaq
+                  String op=IDX.nextToken();
+                  String MaqDir= Integer.toBinaryString(IDXint);
+                  Busqueda =Bytes(codop,Mdir,MaqDir,op);
+                  ////////////////////////Operacion para ContLoc
+                  String cadby=Busqueda[0];
+                  int byt=Integer.parseInt(cadby);
+                  int cont=Integer.parseInt(ContLoc,16);
+                  cont=cont+byt;
+                  ContLoc=Integer.toHexString(cont).toUpperCase();
+                  MaqBan=true;
+                  Mdir="IDX";
+                  /////////////////////////////////////////////// 
                  }
                  
                 }
@@ -897,7 +972,7 @@ public class Operando extends Practica6{
                     IDXcad =IDX.nextToken();
                      
                        int val=IDXcad.length();
-                       System.out.println("Operando: "+Operando+"Cadena IDX "+IDXcad+"Val: "+val);
+                      // System.out.println("Operando: "+Operando+"Cadena IDX "+IDXcad+"Val: "+val);
                  String  IDXcade=IDXcad.substring(1,val);
                  System.out.println("Operando2: "+IDXcade);
                   // IDXcad =IDX.nextToken();
@@ -914,10 +989,10 @@ public class Operando extends Practica6{
                   banRel=true;
                   System.out.println("Operando: "+Operando+"Cadena IDX "+IDXcade);
                   int  IDXint=Integer.parseInt(IDXcade,2);
-                 
+                  System.out.println("IDXint Binario"+IDXint);
                   
                    // IDX 5Bits
-                 if(IDXint>=-16&&IDXint<=15&&IDXB==false&&Operando.matches("^[-]?[0-9]*,([X|x|Y|y|sp|SP|pc|PC])*$")&&IDXB==false){
+                 if(IDXint>=-16&&IDXint<=15&&IDXB==false&&Operando.matches("^.*,([X|x|Y|y|sp|SP|pc|PC])*$")&&IDXB==false){
                      IDXB=true;
                      Mdir="IDX";
                      //////////////////// Busqueda de Bytes y CodMaq
@@ -934,20 +1009,59 @@ public class Operando extends Practica6{
                   Mdir="IDX";
                   /////////////////////////////////////////////// 
                  }
+                 //System.out.println("Logico"+IDXB);
                  //IDX 9 Bits
-                 if(IDXint>=-256&&IDXint<=-17&&IDXB==false||IDXint>=16&&IDXint<=255&&IDXB==false){
+                 if(IDXint>=-256&&IDXint<=-17&&Operando.matches("^.*,([X|x|Y|y|sp|SP|pc|PC])*$")&&IDXB==false||IDXint>=16&&IDXint<=255&&Operando.matches("^.*,([X|x|Y|y|sp|SP|pc|PC])*$")&&IDXB==false){
                      Mdir="IDX1";
                      IDXB=true;
+                     System.out.println("Entro binario IDX1");
+                  //////////////////// Busqueda de Bytes y CodMaq
+                  String op=IDX.nextToken();
+                  String MaqDir= Integer.toBinaryString(IDXint);
+                  Busqueda =Bytes(codop,Mdir,MaqDir,op);
+                  ////////////////////////Operacion para ContLoc
+                  String cadby=Busqueda[0];
+                  int byt=Integer.parseInt(cadby);
+                  int cont=Integer.parseInt(ContLoc,16);
+                  cont=cont+byt;
+                  ContLoc=Integer.toHexString(cont).toUpperCase();
+                  MaqBan=true;
+                  /////////////////////////////////////////////// 
                  }
                  //IDX 16Bits
-                 if(IDXint<=-257&&IDXint>=-32768&&IDXB==false||IDXint>=256&&IDXint<=65535&&IDXB==false){
+                 if(IDXint<=-257&&IDXint>=-32768&&IDXB==false&&Operando.matches("^.*,([X|x|Y|y|sp|SP|pc|PC])*$")&&IDXB==false||IDXint>=256&&IDXint<=65535&&IDXB==false&&Operando.matches("^.*,([X|x|Y|y|sp|SP|pc|PC])*$")&&IDXB==false){
                      Mdir="IDX2";
                      IDXB=true;
+                     //////////////////// Busqueda de Bytes y CodMaq
+                  String op=IDX.nextToken();
+                  String MaqDir= Integer.toBinaryString(IDXint);
+                  Busqueda =Bytes(codop,Mdir,MaqDir,op);
+                  ////////////////////////Operacion para ContLoc
+                  String cadby=Busqueda[0];
+                  int byt=Integer.parseInt(cadby);
+                  int cont=Integer.parseInt(ContLoc,16);
+                  cont=cont+byt;
+                  ContLoc=Integer.toHexString(cont).toUpperCase();
+                  MaqBan=true;
+                  ///////////////////////////////////////////////
                  }
-                 if(Operando.matches("[0-9]*,([+|-])*([X|x|Y|y|sp|SP])*[+|-]*$")&&IDXB==false){
-                     
-                     Mdir="IDX";
+                 if(IDXint<=-1&&IDXint>=-8&&Operando.matches(".*,([+|-])*([X|x|Y|y|sp|SP])*[+|-]*$")&&IDXB==false||IDXint<=8&&IDXint>=1&&Operando.matches(".*,([+|-])*([X|x|Y|y|sp|SP])*[+|-]*$")&&IDXB==false){
+                     //System.out.println("Operando IDXPPP: "+Operando);
+                     Mdir="IDXPP";
                      //System.out.println("Mdir Pre/Post: "+Mdir);
+                     //////////////////// Busqueda de Bytes y CodMaq
+                  String op=IDX.nextToken();
+                  String MaqDir= Integer.toBinaryString(IDXint);
+                  Busqueda =Bytes(codop,Mdir,MaqDir,op);
+                  ////////////////////////Operacion para ContLoc
+                  String cadby=Busqueda[0];
+                  int byt=Integer.parseInt(cadby);
+                  int cont=Integer.parseInt(ContLoc,16);
+                  cont=cont+byt;
+                  ContLoc=Integer.toHexString(cont).toUpperCase();
+                  MaqBan=true;
+                  Mdir="IDX";
+                  /////////////////////////////////////////////// 
                  }
                  
                 }
@@ -958,11 +1072,24 @@ public class Operando extends Practica6{
                    System.out.println("Operando: "+Operando+"Cadena IDX "+IDXcade);
             boolean IDXB=false;    
              // IDXfirst=IDX.nextToken();
-              
+              //Indizado de Acumulador
               if(Operando.matches("^[aAbBdD],[XxYyspSPpcPC]*")){
-                  Mdir="IDX";//Acumulador
-                  IDXB=true;
                   
+                  Mdir="IDXA";//Acumulador
+                  IDXB=true;
+                  //////////////////// Busqueda de Bytes y CodMaq
+                  String op=IDX.nextToken();
+                  String MaqDir=IDXcade;//Acumulador
+                  Busqueda =Bytes(codop,Mdir,MaqDir,op);
+                  ////////////////////////Operacion para ContLoc
+                  String cadby=Busqueda[0];
+                  int byt=Integer.parseInt(cadby);
+                  int cont=Integer.parseInt(ContLoc,16);
+                  cont=cont+byt;
+                  ContLoc=Integer.toHexString(cont).toUpperCase();
+                  MaqBan=true;
+                  Mdir="IDX";
+                  /////////////////////////////////////////////// 
               }
              
               if(IDXcade.matches("^[-]?[0-9].*")&&IDXB==false){
@@ -990,20 +1117,60 @@ public class Operando extends Practica6{
                   /////////////////////////////////////////////// 
                  }
                  //IDX 9 Bits
-                 if(IDXint>=-256&&IDXint<=-17&&IDXB==false||IDXint>=16&&IDXint<=255&&IDXB==false){
+                 if(IDXint>=-256&&IDXint<=-17&&Operando.matches("^[-]?[0-9]*,([X|x|Y|y|sp|SP|pc|PC])*$")&&IDXB==false||IDXint>=16&&IDXint<=255&&Operando.matches("^[-]?[0-9]*,([X|x|Y|y|sp|SP|pc|PC])*$")&&IDXB==false){
                      Mdir="IDX1";
                      IDXB=true;
                      
+                  //////////////////// Busqueda de Bytes y CodMaq
+                  String op=IDX.nextToken();
+                  String MaqDir= Integer.toBinaryString(IDXint);
+                  Busqueda =Bytes(codop,Mdir,MaqDir,op);
+                  ////////////////////////Operacion para ContLoc
+                  String cadby=Busqueda[0];
+                  int byt=Integer.parseInt(cadby);
+                  int cont=Integer.parseInt(ContLoc,16);
+                  cont=cont+byt;
+                  ContLoc=Integer.toHexString(cont).toUpperCase();
+                  MaqBan=true;
+                  /////////////////////////////////////////////// 
                  }
                  //IDX 16Bits
-                 if(IDXint<=-257&&IDXint>=-32768&&IDXB==false||IDXint>=256&&IDXint<=65535&&IDXB==false){
+                 if(IDXint<=-257&&IDXint>=-32768&&IDXB==false&&Operando.matches("^[-]?[0-9]*,([X|x|Y|y|sp|SP|pc|PC])*$")||IDXint>=256&&IDXint<=65535&&IDXB==false&&Operando.matches("^[-]?[0-9]*,([X|x|Y|y|sp|SP|pc|PC])*$")){
                      Mdir="IDX2";
                      IDXB=true;
+                     //////////////////// Busqueda de Bytes y CodMaq
+                  String op=IDX.nextToken();
+                  String MaqDir= Integer.toBinaryString(IDXint);
+                  Busqueda =Bytes(codop,Mdir,MaqDir,op);
+                  ////////////////////////Operacion para ContLoc
+                  String cadby=Busqueda[0];
+                  int byt=Integer.parseInt(cadby);
+                  int cont=Integer.parseInt(ContLoc,16);
+                  cont=cont+byt;
+                  ContLoc=Integer.toHexString(cont).toUpperCase();
+                  MaqBan=true;
+                  ///////////////////////////////////////////////
                  }
-                 if(Operando.matches("[0-9]*,([+|-])*([X|x|Y|y|sp|SP])*[+|-]*$")&&IDXB==false){
-                     
-                     Mdir="IDX";
+                 //IDX Pre/Post
+                 System.out.println("Operando IDXPPPAfU: "+Operando);
+                                                           //^[-]*([0-9a-dA-D])*,[+|-]*([X|x|Y|y|sp|SP|pc|PC])*$
+                 if(IDXint<=-1&&IDXint>=-8&&Operando.matches("^[-]*[0-9]*,([+|-])*([X|x|Y|y|sp|SP])*[+|-]*$")&&IDXB==false||IDXint<=8&&IDXint>=1&&Operando.matches("^[-]*[0-9]*,([+|-])*([X|x|Y|y|sp|SP])*[+|-]*$")&&IDXB==false){
+                     System.out.println("Operando IDXPPP: "+Operando);
+                     Mdir="IDXPP";
                      //System.out.println("Mdir Pre/Post: "+Mdir);
+                     //////////////////// Busqueda de Bytes y CodMaq
+                  String op=IDX.nextToken();
+                  String MaqDir= Integer.toBinaryString(IDXint);
+                  Busqueda =Bytes(codop,Mdir,MaqDir,op);
+                  ////////////////////////Operacion para ContLoc
+                  String cadby=Busqueda[0];
+                  int byt=Integer.parseInt(cadby);
+                  int cont=Integer.parseInt(ContLoc,16);
+                  cont=cont+byt;
+                  ContLoc=Integer.toHexString(cont).toUpperCase();
+                  MaqBan=true;
+                  Mdir="IDX";
+                  /////////////////////////////////////////////// 
                  }
                  
                 }else{
@@ -1017,7 +1184,7 @@ public class Operando extends Practica6{
                           
                           //////////////////// Busqueda de Bytes y CodMaq
                   String op=IDX.nextToken();
-                  String MaqDir= Integer.toBinaryString(0);
+                  String MaqDir="0000";
                   Busqueda =Bytes(codop,Mdir,MaqDir,op);
                   ////////////////////////Operacion para ContLoc
                   String cadby=Busqueda[0];
@@ -1614,6 +1781,18 @@ public class Operando extends Practica6{
                               Operando=EtOp;
                               EtOp="null";
                           }
+                          if(dir.equals("IDXPP")){
+                              IDX5=dir;
+                              dir="IDX";
+                              Operando=EtOp;
+                              EtOp="null";
+                          }
+                          if(dir.equals("IDXA")){
+                              IDX5=dir;
+                              dir="IDX";
+                              Operando=EtOp;
+                              EtOp="null";
+                          }
                          try{
                              FileInputStream fsaux = new FileInputStream(TABOP+".asm");
                              DataInputStream dsaux = new DataInputStream(fsaux);
@@ -1686,7 +1865,7 @@ public class Operando extends Practica6{
                                        }
                                        if(dir.equals(moddir)&&IDX5.equals("IDX5")&&Operando!="null"){
                                            int siz=CodMaq.length();
-                                           System.out.println("Binario: "+CodMaq);
+                                           //System.out.println("Binario: "+CodMaq);
                                            if(siz>4){
                                                String auxbin=CodMaq.substring(0, siz-5);
                                                int siz2=auxbin.length();
@@ -1716,21 +1895,208 @@ public class Operando extends Practica6{
 		                            }
                                              System.out.println("Binario2: "+CodMaq+" Operando "+rr);
                                             String rr0nnnnn=rr+CodMaq;
-                                             String rr0n=rr0nnnnn.substring(0,7-4);
+                                             String rr0n=rr0nnnnn.substring(0,8-4);
                                             // fillContLoc(rr0n);
                                              int a=Integer.parseInt(rr0n, 2);
-                                             String nnnn=rr0nnnnn.substring(3,7);
+                                             String nnnn=rr0nnnnn.substring(4,8);
                                              int b=Integer.parseInt(nnnn, 2);
                                              //int c=Integer.parseInt(rr0nnnnn, 2);
                                              String hex=Integer.toHexString(a);
                                              String hex2=Integer.toHexString(b);
                                              //String hex3=Integer.toHexString(c);
-                                            //System.out.println("rr0n: "+rr0n+"nnnn: "+nnnn+"Int1: "+a+" Int2: "+b+" rr: "+rr+" CodMaq: "+CodMaq+" Binario2: "+hex+" Binario3: "+hex2+" Binario3: "+hex3);
+                                            System.out.println("rr0nnnnn: "+rr0nnnnn+" rr0n: "+rr0n+"nnnn: "+nnnn+"Int1: "+a+" Int2: "+b+" rr: "+rr+" CodMaq: "+CodMaq+" Binario2: "+hex+" Binario3: "+hex2+" Binario3: ");
                                              Bytes[0]=bytesxcal;
                                              Bytes[1]=codcal+hex.toUpperCase()+hex2.toUpperCase();
+                                            }//Termina IDX
+                                       if(dir.equals(moddir)&&dir.equals("IDX1")&&EtOp!="null"){
+                                          String z="0",s="0",n111="111";
+                                           int siz=CodMaq.length();
+                                           int valor=Integer.parseInt(CodMaq,2);
+                                           String rr=EtOp,VHex2="null";
+                                           rr=rr.toUpperCase();
+                                           if(rr.equals("X")){
+			                    rr="00";
+		                            }
+		                            if(rr.equals("Y")){
+			                     rr="01";
+		                            }
+		                             if(rr.equals("SP")){
+			                     rr="10";
+		                            }
+		                             if(rr.equals("PC")){
+			                      rr="11";
+		                            }
+                                           //  System.out.println("Valor IDX1: "+valor);
+                                             if(-256<=valor&&valor<0){
+                                                 s="1";
+                                                 String VHex=Integer.toHexString(valor);
+                                                  VHex2=VHex.substring(14,16);
+                                                 
+                                             }
+                                             else{
+                                                  VHex2=Integer.toHexString(valor);
+                                             }
+                                             System.out.println("ValorHex: "+VHex2);
+                                             String R111rr0zs=n111+rr+"0"+z+s;
+                                             String R111r=R111rr0zs.substring(0,7-3);
+                                             int a=Integer.parseInt(R111r,2);
+                                             String r0zs=R111rr0zs.substring(4,8);
+                                             int b=Integer.parseInt(r0zs,2);
+                                             String hex=Integer.toHexString(a);
+                                             String hex2=Integer.toHexString(b);
+                                             // System.out.println("R111rr0zs "+R111rr0zs+" R111r: "+R111r+" r0zs: "+r0zs+" n111: "+n111+" rr: "+rr+" z: "+z+" s: "+s);
+                                             Bytes[0]=bytesxcal;
+                                             Bytes[1]=codcal+hex.toUpperCase()+hex2.toUpperCase()+VHex2;
+                                       }//Termina IDX1
+                                       if(dir.equals(moddir)&&dir.equals("IDX2")&&EtOp!="null"){
+                                       String z="1",s="0",n111="111";
+                                           int siz=CodMaq.length();
+                                           int valor=Integer.parseInt(CodMaq,2);
+                                           String rr=EtOp,VHex2="null";
+                                           rr=rr.toUpperCase();
+                                           if(rr.equals("X")){
+			                    rr="00";
+		                            }
+		                            if(rr.equals("Y")){
+			                     rr="01";
+		                            }
+		                             if(rr.equals("SP")){
+			                     rr="10";
+		                            }
+		                             if(rr.equals("PC")){
+			                      rr="11";
+		                            }
+                                             System.out.println("Valor IDX2: "+valor);
+                                             if(-32768<=valor&&valor<0){
+                                                 s="1";
+                                                 String VHex=Integer.toHexString(valor);
+                                                  VHex2=VHex.substring(12,16);
+                                                 
+                                             }
+                                             else{
+                                                  VHex2=Integer.toHexString(valor);
+                                             }
+                                             System.out.println("ValorHex: "+VHex2);
+                                             String R111rr0zs=n111+rr+"0"+z+s;
+                                             String R111r=R111rr0zs.substring(0,8-4);
+                                             int a=Integer.parseInt(R111r,2);
+                                             String r0zs=R111rr0zs.substring(4,8);
+                                             int b=Integer.parseInt(r0zs,2);
+                                             String hex=Integer.toHexString(a);
+                                             String hex2=Integer.toHexString(b);
+                                            // System.out.println("111rr0zs "+R111rr0zs+" R111r: "+R111r+" r0zs: "+r0zs+" n111: "+n111+" rr: "+rr+" z: "+z+" s: "+s);
+                                             Bytes[0]=bytesxcal;
+                                             Bytes[1]=codcal+hex.toUpperCase()+hex2.toUpperCase()+VHex2;
+                                       }//Termina IDX2  
+                                       if(dir.equals(moddir)&&IDX5.equals("IDXPP")&&Operando!="null"){
+                                           int siz=Operando.length();
+                                           String rr="00",p="0",nnnn="0000";
+                                           int valor;
+                                           
+                                           if(Operando.matches("^[+][XxYySPspPCpc]{1,2}$")||Operando.matches("^[XxYySPspPCpc]{1,2}[+]$")){
+                                               p="1";
+                                               if(Operando.matches("^[+][XxYySPspPCpc]{1,2}$")){
+                                               
+                                               rr=Operando.substring(1,siz);
+                                               
+                                               }
+                                               if(Operando.matches("^[XxYySPspPCpc]{1,2}[+]$")){
+                                               rr=Operando.substring(0,siz-1);
+                                               }
+                                               valor=Integer.parseInt(CodMaq,2);
+                                               valor--;
+                                               if(valor==1){
+                                                   nnnn="0000";
+                                               }else
+                                               {
+                                                   nnnn=Integer.toBinaryString(valor);
+                                               }
+                                             //  System.out.println("CodMaq: "+CodMaq+" valor: "+valor);
+                                           }
+                                           if(Operando.matches("^[-][XxYySPspPCpc]{1,2}$")||Operando.matches("^[XxYySPspPCpc]{1,2}[-]$")){
+                                               p="0";
+                                               if(Operando.matches("^[-][XxYySPspPCpc]{1,2}$")){
+                                                   
+                                               rr=Operando.substring(1,siz);
+                                               
+                                               }
+                                               if(Operando.matches("^[XxYySPspPCpc]{1,2}[-]$")){
+                                               rr=Operando.substring(0,siz-1);
+                                               }
+                                               
+                                               //valor=Integer.parseInt(CodMaq,2);
+                                                  // String Aux=Integer.toBinaryString(valor);
+                                                   int n=CodMaq.length();
+                                                   
+                                                  nnnn=CodMaq.substring(0,n-4);
+                                                  int n2=nnnn.length();
+                                                  //System.out.println("CodMaq: "+CodMaq+" n: "+n+" n2: "+n2);
+                                                  //System.out.println("Operando: "+Operando+" rr: "+rr+" siz: "+siz);
+                                                  //System.out.println("rr: "+rr+"n: "+n+"n2: "+n2);
+                                                  nnnn=CodMaq.substring(n2,n);
+                                                  //System.out.println("nnnn: "+nnnn);
+                                           }
+                                           rr=rr.toUpperCase();
+                                           if(rr.equals("X")){
+			                    rr="00";
+		                            }
+		                            if(rr.equals("Y")){
+			                     rr="01";
+		                            }
+		                             if(rr.equals("SP")){
+			                     rr="10";
+		                            }
+		                             if(rr.equals("PC")){
+			                      rr="11";
+		                            }
+                                             String rr1pnnnn=rr+"1"+p+nnnn;
+                                             String rr1p=rr1pnnnn.substring(0,4);
+                                             int a=Integer.parseInt(rr1p,2);
+                                             int b=Integer.parseInt(nnnn,2);
+                                             String hex=Integer.toHexString(a);
+                                             String hex2=Integer.toHexString(b);
+                                             Bytes[0]=bytesxcal;
+                                             Bytes[1]=codcal+hex+hex2;
+                                             System.out.println("CodMaq: "+Bytes[1]+" rr1pnnnn: "+rr1pnnnn+" rr1p: "+rr1p+" nnnn: "+nnnn);
+                                       }//Termina IDX Pre Post
+                                       if(dir.equals(moddir)&&IDX5.equals("IDXA")&&Operando!="null"){
+                                          String X111rr1aa="0",aa="0",rr="0";
+                                          aa=CodMaq;
+                                          rr=Operando;
+                                          aa=aa.toUpperCase();
+                                          rr=rr.toUpperCase();
+                                           if(rr.equals("X")){
+			                    rr="00";
+		                            }
+		                            if(rr.equals("Y")){
+			                     rr="01";
+		                            }
+		                             if(rr.equals("SP")){
+			                     rr="10";
+		                            }
+		                             if(rr.equals("PC")){
+			                      rr="11";
+		                            }
+                                            if(aa.equals("A")){
+                                                aa="00";
                                             }
-                                       
-                                       
+                                            if(aa.equals("B")){
+                                                aa="01";
+                                            }
+                                            if(aa.equals("D")){
+                                                aa="10";
+                                            }
+                                          X111rr1aa="111"+rr+1+aa;
+                                          String X111r=X111rr1aa.substring(0,8-4);
+                                          String r1aa=X111rr1aa.substring(4,8);
+                                          int a=Integer.parseInt(X111r,2);
+                                          int b=Integer.parseInt(r1aa,2);
+                                          String hex=Integer.toHexString(a);
+                                          String hex2=Integer.toHexString(b);
+                                          Bytes[0]=bytesxcal;
+                                          Bytes[1]=codcal+hex+hex2;
+                                          System.out.println("CodMaq: "+Bytes[1]+" X111rr1aa: "+X111rr1aa+" X111r: "+X111r+" r1aa: "+r1aa);
+                                       }//Termina IDX Acumulador
                                        
                                        
                                        }
@@ -1810,7 +2176,7 @@ public class Operando extends Practica6{
                                    }
                              dsaux.close(); 
                           }catch(Exception r){
-                             System.out.println("Hubo un error en la busqueda de Tabsim "+r);
+                             System.out.println("Hubo un error en la busqueda de Tabsim 2: "+r);
                          }
         
         
@@ -1993,5 +2359,71 @@ public class Operando extends Practica6{
         }
           return Linea;      
         }
+        public void Ordena(String dir,String etiqueta){
+            
+            String mayus,exetq,ContLoc=null;
+                          
+                         try{
+                             FileInputStream fsaux = new FileInputStream(dir+".INST");
+                             DataInputStream dsaux = new DataInputStream(fsaux);
+                             BufferedReader  braux = new BufferedReader(new InputStreamReader(dsaux));
+                             
+                             String linaux,ContLocAux="null",numaux="null";
+                            String[] auxiliar =new String[]{"null","null","null","null","null","null","null"};
+                            String[] Resultado =new String[]{"null","null"};
+                             boolean contban=false;
+                             while((linaux = braux.readLine())!= null){
+                                 
+                                 StringTokenizer aucod = new StringTokenizer(linaux,"       ");
+                                        mayus=etiqueta;
+                                   auxiliar[0]=aucod.nextToken();//Linea
+                                   auxiliar[1]=aucod.nextToken();//ContLoc
+                                   auxiliar[2]=aucod.nextToken();//Etiqueta
+                                   auxiliar[3]=aucod.nextToken();//Codop
+                                   auxiliar[4]=aucod.nextToken();//Oper
+                                   auxiliar[5]=aucod.nextToken();//Modo de direccion
+                                   auxiliar[6]=aucod.nextToken();//Codigo Maquina
+                                   System.out.println("Operando: "+etiqueta+" Opertds: "+auxiliar[2]);
+                                   if(!auxiliar[2].equals(mayus)){
+                                       File fsaux2 = new File(dir+"2"+".INST");
+                                       FileWriter dsaux2 = new FileWriter(fsaux2);
+                                       BufferedWriter  instruccion2 = new BufferedWriter(dsaux2);
+                                           String linaux2;   
+                                               //ordena el archivo instruccion 
+                                             instruccion2.write(auxiliar[0]+"       "+auxiliar[1]+"        "+auxiliar[2]+"        "+auxiliar[3]+"        "+auxiliar[4]+"       "+auxiliar[5]+"     "+auxiliar[6]);                 
+                                              ContLocAux=auxiliar[1];
+                                              numaux=auxiliar[0];
+                                       instruccion2.close();
+                                   }else{
+                                       File fsaux2 = new File(dir+"2"+".INST");
+                                       FileWriter dsaux2 = new FileWriter(fsaux2);
+                                       BufferedWriter  instruccion2 = new BufferedWriter(dsaux2);
+                                           String linaux2;   
+                                               //ordena el archivo instruccion 
+                                       if(ContLocAux!="null"){                      
+                                  instruccion2.write(numaux+"       "+ContLocAux+"        "+auxiliar[2]+"        "+auxiliar[3]+"        "+auxiliar[4]+"       "+auxiliar[5]+"     "+auxiliar[6]);                 
+                                       }else{     
+                                      String dum="null",dum2="null";
+                                      
+                                      Resultado=Bytes(auxiliar[3],auxiliar[5],dum,dum2);
+                                      auxiliar[1]=Resultado[0];
+                                      instruccion2.write(auxiliar[0]+"       "+auxiliar[1]+"        "+auxiliar[2]+"        "+auxiliar[3]+"        "+auxiliar[4]+"       "+auxiliar[5]+"     "+auxiliar[6]);
+                                       
+                                       }    
+                                       instruccion2.close();
+                                       contban=true;
+                                   }
+                                   ContLocAux="null";
+                                   numaux="null";
+                                   }
+                             dsaux.close(); 
+                          }catch(Exception r){
+                             System.out.println("Hubo un error en el metodo Ordena "+r);
+                         }
+        
+        
+       
+            
+        }//Termina Ordena
     }
     
