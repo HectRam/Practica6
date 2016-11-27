@@ -167,7 +167,7 @@ public class Practica6 {
                          
                          String TABOP="TABOP";
                          String mayus,maux="null",maux2="null",maux3="null";
-                         
+                         String compare="null",comparecod="null";
                          try{
                              FileInputStream fsaux = new FileInputStream(TABOP+a);
                              DataInputStream dsaux = new DataInputStream(fsaux);
@@ -218,6 +218,7 @@ public class Practica6 {
                                        System.out.println(" Total de bytes: "+totbytes);
                               */       
                                      //  System.out.println("Codop "+codop+" Operando"+moddir);
+                                     
                                            dircod=codop+a;
                                            if(dircod!="null.asm")
                                            {
@@ -242,9 +243,17 @@ public class Practica6 {
                                               
                                                maux=moddir;
                                            }
-                                           if(codop.equals("CLR")&&moddir.equals("EXT")||codop.equals("JMP")&&moddir.equals("EXT")){
+                                           if(moddir.equals("DIR")){
+                                               compare=moddir;
+                                               comparecod=codop;
+                                           }
+                                           if(moddir.equals("EXT")){
                                               maux2=codop; 
                                            }
+                                           if(comparecod.equals(codop)&&moddir.equals("EXT")){
+                                               maux2="null";
+                                           }
+                                           
                                            
                                                //System.out.println("Codop "+codop+" moddir ");
                                                moddir="null";
@@ -356,7 +365,7 @@ public class Practica6 {
                                        /*  pos=linToken.trim().indexOf(' ');
                                         exEt=thisLine.substring(0,pos);
                                         System.out.println("Pos "+pos+"exEt"+exEt);*/
-                                         if(linToken.matches("^[a-zA-Z]{0,8}[^;]{0,1}[\\w]$")&&banCom==false&&codop!=linToken)
+                                         if(linToken.matches("^[a-zA-Z]{0,8}[\\w]{1,8}$")&&linToken.matches(".*[^,].*")&&banCom==false&&codop!=linToken)
                                          {
                                             p=linToken.trim().length();
                                             //System.out.println("Print linToken inside"+linToken);
@@ -376,6 +385,8 @@ public class Practica6 {
                                            //if(linToken.equals(exEt)){
                                                
                                                etiqueta=linToken.trim();
+                                               etiqueta=etiqueta.toUpperCase();
+                                               System.out.println("Print etiqueta  "+etiqueta);
                                                /*System.out.println("Print linToken "+linToken);
                                                System.out.println("Print etiqueta  "+etiqueta);*/
                                               //System.out.println("TRIM  "+etiqueta);
@@ -505,7 +516,7 @@ public class Practica6 {
                        tabsim.close();
                       }//Termina Tabsim
                       //Entra busqueda de codigo maquina Extendido
-                      if(codoplin.equals("EXT")&&operando.matches("^[a-zA-Z]{0,8}[^;]{0,1}[\\w]$")){
+                      if(codoplin.equals("EXT")&&operando.matches("^[a-zA-Z]{0,8}[\\w]$")&&operando.matches(".*[^,].*")){
                           
                           String Con=op.TabsimCheck2(dir,operando);
                           System.out.println("ConTab: "+Con);
@@ -519,6 +530,8 @@ public class Practica6 {
                               error.write("Error Linea: "+c+" No se encontro la etiqueta en Tabsim para: "+operando);
                               error.newLine();
                               compara=1;
+                              ContLoc=ContLoc2;
+                              System.out.println("ContLoc2"+ContLoc2);
                           }
                          }///Termina
                         if(compara==0){
@@ -581,7 +594,8 @@ public class Practica6 {
                      operval=0;
                      compara=0;
                      CodMaq=" ";
-                      bits="null";
+                     bits="null";
+                     moddir2="null";
                      if(linToken.matches(".*END.*")||linToken.matches(".*End.*")||linToken.matches(".*end.*")){//verifica si tiene End
                            banEnd = true;
                            System.out.println("Entro End");
